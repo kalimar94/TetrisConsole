@@ -6,12 +6,6 @@ namespace TetrisGame
     {
        
     }
-    struct Position
-    {
-        public int X;
-        public int Y;
-    }
-
     public class Part
     {
         Position position;
