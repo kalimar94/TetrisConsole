@@ -4,17 +4,39 @@ namespace TetrisGame
 {
     class TetrisParts
     {
-        static void DeclaredObjects()
-        {
-            bool[,] fallingObjects = new bool[2, 3];
+       
+    }
+    struct Position
+    {
+        public int X;
+        public int Y;
+    }
 
-            for (int i = 0; i < fallingObjects.GetLength(0); i++)
-            {
-                for (int j = 0; j < fallingObjects.GetLength(1); j++)
-                {
-                    Console.WriteLine(fallingObjects[i,j]);
-                }
-            }
+    public class Part
+    {
+        Position position;
+        bool[,] elements;
+        public Part(Position position, bool[,] elements)
+        {
+            this.position = position;
+            this.elements = elements;
+
+        }
+        /// <summary>
+        /// Generate Random Part
+        /// </summary>
+        public Part()
+        {
+            bool[,] element1 = new bool[2, 3] { {true,false,false}, 
+                                                {true,true,true}};
+            bool[,] element2 = new bool[2, 3] { {false,true,false},
+                                                {true,true,true}};
+            bool[,] element3 = new bool[2, 3] { {false,false,false},
+                                                {true,true,true}};
+            bool[,] element4 = new bool[2, 3] { {true,true,false},
+                                                {false,true,true}};
+            bool[,] element5 = new bool[2, 3] { {false,true,true},
+                                                {false,true,false}};
         }
     }
 }
