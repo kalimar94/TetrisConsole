@@ -1,10 +1,16 @@
 ﻿using System;
 
-class Tetris
+namespace TetrisGame
 {
-    static void Main()
+    class Tetris
     {
-        Console.WriteLine();
+        static void Main()
+        {
+            Console.WriteLine();
+            Console.WindowHeight = 60;
+            Console.WindowWidth = 50;
+            Console.SetBufferSize(50, 60);
+
+        }
     }
 }
-
