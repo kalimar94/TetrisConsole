@@ -1,9 +1,10 @@
 ﻿using System;
 
-    class Tetris
+class Tetris
+{
+    static void Main()
     {
-        static void Main()
-        {
-        }
+        Console.WriteLine();
     }
+}
 
