@@ -1,155 +1,90 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 
 namespace TetrisGame
 {
-    enum Direction { Left, Right, Up, Down }
+    public enum Direction { Left, Right, Up, Down }
     class Tetris
     {
-        static bool[,] part = 
-        {
-            {false, true, false},
-            {true, true, true}
-        };
+        static bool[,] field = new bool[50, 40];
+        static bool[,] testPart = {
+                                  {false, true, false},
+                                  {true, true, true}
+                                  };
 
         static void Main()
         {
             Console.WriteLine();
-            Console.WindowHeight = 60;
+            Console.WindowHeight = 40;
             Console.WindowWidth = 50;
-            Console.SetBufferSize(50, 60);
+            Console.SetBufferSize(50, 40);
 
-            Direction currentDirection = Direction.Down;
-            Position currentPosition = new Position(0, 0);
+            var part = new Part(new Position(0, 0), testPart, field) ;
 
             while (true)
             {
                 if (Console.KeyAvailable)
                 {
                     var key = Console.ReadKey();
-                    if (key.Key == ConsoleKey.LeftArrow && currentPosition.x > 0)
+                    if (key.Key == ConsoleKey.LeftArrow && part.position.x > 0 && part.CanMove(Direction.Left))
                     {
-                        currentPosition.x--;
+                        part.position.x--;
                     }
-                    else if (key.Key == ConsoleKey.RightArrow && currentPosition.x < 47)
+                    else if (key.Key == ConsoleKey.RightArrow && part.position.x < 47 && part.CanMove(Direction.Right))
                     {
-                        currentPosition.x++;
+                        part.position.x++;
                     }
                     else if (key.Key == ConsoleKey.UpArrow)
                     {
-                        switch (currentDirection)
+                        switch (part.direction)
                         {
                             case Direction.Left:
-                                currentDirection = Direction.Down;
+                                part.direction = Direction.Down;
                                 break;
                             case Direction.Right:
-                                currentDirection = Direction.Up;
+                                part.direction = Direction.Up;
                                 break;
                             case Direction.Up:
-                                currentDirection = Direction.Left;
+                                part.direction = Direction.Left;
                                 break;
                             case Direction.Down:
-                                currentDirection = Direction.Right;
+                                part.direction = Direction.Right;
                                 break;
                             default:
                                 break;
                         }
                     }
-                    Console.SetCursorPosition(20, 30);
-                    Console.WriteLine(currentDirection);
                 }
-                Console.SetCursorPosition(0, currentPosition.y);
-                Console.Write(new string(' ', 50));
-                Console.SetCursorPosition(0, currentPosition.y+1);
-                Console.Write(new string(' ', 50));
-                Console.SetCursorPosition(0, currentPosition.y+2);
-                Console.Write(new string(' ', 50));
-                currentPosition.y++;
-                PrintPart(part, currentDirection, currentPosition);
-                Thread.Sleep(400);
+                part.position.y++;
+                bool isStuck = !part.CanMove(Direction.Down);
+                part.PrintPart(isStuck);
+                if (isStuck)
+                {
+                    part = new Part(field);
+                }
+                PrintField();
+                Thread.Sleep(150);
+                part.RemovePart();
             }
 
 
         }
 
-        static void PrintPart(bool[,] part, Direction direction, Position position)
+        static void PrintField()
         {
-            Console.SetCursorPosition(position.x, position.y);
-            switch (direction)
+            for (int rows = 0; rows < field.GetLength(0); rows++)
             {
-                case Direction.Left:
-                    for (int i = 0; i < part.GetLength(1); i++)
+                for (int cols = 0; cols < field.GetLength(1); cols++)
+                {
+                    if (field[rows, cols])
                     {
-                        for (int j = 0; j < part.GetLength(0); j++)
-                        {
-                            if (part[j, i])
-                            {
-                                Console.Write("#");
-                            }
-                        }
-                        Console.CursorTop++;
-                        Console.CursorLeft = position.x;
+                        Console.SetCursorPosition(rows, cols);
+                        Console.Write("X");
                     }
-                    break;
-                case Direction.Right:
-                    for (int i = part.GetLength(1) - 1; i >= 0; i--)
-                    {
-                        for (int j = 0; j < part.GetLength(0); j++)
-                        {
-                            if (part[j, i])
-                            {
-                                Console.Write("#");
-                            }
-                            else
-                            {
-                                Console.Write(" ");
-                            }
-                        }
-                        Console.CursorTop++;
-                        Console.CursorLeft = position.x;
-                    }
-                    break;
-                case Direction.Up:
-                    for (int i = part.GetLength(0) - 1; i >= 0; i--)
-                    {
-                        for (int j = part.GetLength(1) - 1; j >= 0; j--)
-                        {
-                            if (part[i, j])
-                            {
-                                Console.Write("#");
-                            }
-                            else
-                            {
-                                Console.Write(" ");
-                            }
-                        }
-                        Console.CursorTop++;
-                        Console.CursorLeft = position.x;
-                    }
-                    break;
-                case Direction.Down:
-                    for (int i = 0; i < part.GetLength(0); i++)
-                    {
-                        for (int j = 0; j < part.GetLength(1); j++)
-                        {
-                            if (part[i, j])
-                            {
-                                Console.Write("#");
-                            }
-                            else
-                            {
-                                Console.Write(" ");
-                            }
-                        }
-                        Console.CursorTop++;
-                        Console.CursorLeft = position.x;
-                    }
-                    break;
-                default:
-                    break;
+                }
             }
         }
-
     }
 
     public struct Position
